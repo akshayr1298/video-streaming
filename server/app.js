@@ -32,6 +32,16 @@ app.use('/',userRoutes)
 
 
 
+app.use((err,req,res,next)=>{
+    const status = err.status || 500;
+    const message = err.message || "Oops something went to wrong!!";
+    return res.status(status).json({
+        success:false,
+        status,
+        message,
+    })
+})
+
 // port
 app.listen(process.env.PORT,()=>{
     console.log(`server started on port ${process.env.PORT}`);

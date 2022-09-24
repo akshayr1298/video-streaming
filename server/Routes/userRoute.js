@@ -5,11 +5,11 @@ const router = express.Router()
 const importUser  = require('../Controler/usercontroler.js')
 
 // create user
-router.post('/signup',)
+router.post('/signup',importUser.doSignup)
 
 
 // sign in
-router.post('/signin',)
+router.post('/signin',importUser.doLogin)
 
 
 
