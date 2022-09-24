@@ -40,5 +40,15 @@ module.exports={
             next(err)
             console.log(err);
         }
-    }
+    },
+
+    logout: (req, res) => {
+        try {
+          res.clearCookie('acces_token');
+          return res.json({ message: 'logout successful' });
+        } catch (error) {
+          console.log(error);
+          return res.status(401).json({ error: 'logout failed' }); // 401 Unauthorized;
+        }
+      },
 }

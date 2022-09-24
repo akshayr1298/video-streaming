@@ -12,6 +12,11 @@ router.post('/signup',importUser.doSignup)
 router.post('/signin',importUser.doLogin)
 
 
+// logout
+router.post('/logout',importUser.logout)
+
+
+
 
 
 

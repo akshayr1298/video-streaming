@@ -8,7 +8,8 @@ import IconButton from '@material-ui/core/IconButton';
 import Button from '@material-ui/core/Button';
 import MenuIcon from '@mui/icons-material/Menu';
 import { useNavigate } from 'react-router-dom';
-
+import { severURl } from '../../Constant/Constant';
+import axios from 'axios'
 
 const useStyles = makeStyles(theme => ({
     menuButton: {
@@ -23,6 +24,19 @@ function Navbar() {
 
     const classes = useStyles();
     const navigate  = useNavigate()
+
+
+    const hanldeLogOut = async()=>{
+        axios.post(`${severURl}logout`,{
+          withCredential:true
+        }).then((res)=>{
+          console.log(res);
+          navigate('/signIn')
+        }).catch((err)=>{
+          console.log(err);
+    
+        })
+      }
   
   return (
     <AppBar position="static">
@@ -40,6 +54,9 @@ function Navbar() {
       </Typography>
       <Button color="inherit" onClick={()=>navigate('/signIn')}>
         SignIn
+      </Button>
+      <Button  color="inherit" onClick={hanldeLogOut}>
+       Logout
       </Button>
     </Toolbar>
       </AppBar>
