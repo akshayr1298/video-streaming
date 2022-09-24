@@ -11,6 +11,11 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
+import { useState } from 'react';
+import { validEmail, validPassword } from '../../RegexValidation/RegexValidation';
+import { severURl } from '../../Constant/Constant';
+import axios from 'axios'
+import { useNavigate } from 'react-router-dom';
 
 function Copyright(props) {
   return (
@@ -28,14 +33,43 @@ function Copyright(props) {
 const theme = createTheme();
 
 export default function SignIn() {
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    const data = new FormData(event.currentTarget);
-    console.log({
-      email: data.get('email'),
-      password: data.get('password'),
-    });
-  };
+  
+  const [email,setEmail] =  useState('')
+  const [password,setPassword] = useState('')
+  const [emailErr,setEmailErr] = useState(false)
+  const [pswrdErr,setPswrdErr] = useState(false)
+  const [userData,setUserData] = useState('')
+  const navigate = useNavigate()
+
+
+  const handelSubmit = async(event)=>{
+    event.preventDefault()
+
+    if(!validEmail.test(email)){
+      setEmailErr(true)
+    }
+    if(!validPassword.test(password)){
+      setPswrdErr(true)
+    }
+
+    const data = {email,password}
+
+    setUserData(data)
+ 
+    axios.post(`${severURl}signin`,data).then((res)=>{
+      console.log('signIn success',res.data);
+      navigate('/')
+
+      
+  }).catch((err)=>{
+      console.log(err);
+
+  }) 
+
+
+   
+  }
+
 
   return (
     <ThemeProvider theme={theme}>
@@ -55,7 +89,7 @@ export default function SignIn() {
           <Typography component="h1" variant="h5">
             Sign in
           </Typography>
-          <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
+          <Box component="form" noValidate sx={{ mt: 1 }}>
             <TextField
               margin="normal"
               required
@@ -65,7 +99,10 @@ export default function SignIn() {
               name="email"
               autoComplete="email"
               autoFocus
+              value={email}
+              onChange={(e)=>setEmail(e.target.value)}
             />
+            {emailErr && <small  style={{ color: 'red' }}>Enter a valid email</small>}
             <TextField
               margin="normal"
               required
@@ -75,13 +112,18 @@ export default function SignIn() {
               type="password"
               id="password"
               autoComplete="current-password"
+              value={password}
+              onChange={(e)=>setPassword(e.target.value)}
             />
+            {pswrdErr && <small  style={{ color: 'red' }}>Enter a valid password</small>}
            
             <Button
               type="submit"
               fullWidth
               variant="contained"
               sx={{ mt: 3, mb: 2 }}
+              data={userData}
+              onClick={handelSubmit}
             >
               Sign In
             </Button>

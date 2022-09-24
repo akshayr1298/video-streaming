@@ -1,18 +1,21 @@
-const User = require("../Models/users")
+const User = require("../Models/users.js")
 const bcrypt = require('bcrypt')
 require('dotenv').config()
 const jwt = require('jsonwebtoken')
 module.exports={
 
     doSignup:async(req,res,next)=>{
+     
         try{
-            const salt = bcrypt.genSaltSync(10)
-            const hash = bcrypt.hashSync(erq.body.password,salt)
-            const newUser = new User({...req.body,password:hash})
-            await newUser.save()
+            
+            const hashPswrd = await bcrypt.hash(req.body.password,10)
+            await User.create({
+                name:req.body.name,
+                email:req.body.email,
+                password:hashPswrd})
             return res.status(200).send("user have been created")
 
-        }catch(err){
+        }catch(err){    
             next(err)
             console.log(err);
 
@@ -20,6 +23,7 @@ module.exports={
     },
 
     doLogin:async(req,res,next)=>{
+    
         try{
             const user = await User.findOne({email:req.body.email})
             if(!user) return res.status(403).send('user not found')

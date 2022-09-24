@@ -11,6 +11,11 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
+import { useState } from 'react';
+import { validEmail, validName, validPassword } from '../../RegexValidation/RegexValidation';
+import axios from 'axios'
+import { severURl } from '../../Constant/Constant';
+import { useNavigate } from 'react-router-dom';
 
 function Copyright(props) {
   return (
@@ -27,15 +32,54 @@ function Copyright(props) {
 
 const theme = createTheme();
 
+
 export default function SignUp() {
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    const data = new FormData(event.currentTarget);
-    console.log({
-      email: data.get('email'),
-      password: data.get('password'),
-    });
-  };
+
+    const navigate = useNavigate()
+
+  const [name,setName] = useState('')
+  const [email,setEmail] = useState('')
+  const [password,setPassword] = useState('')
+  const [nameErr,setNameErr] = useState(false)
+  const [emailErr,setEmailErr] = useState(false)
+  const [pswrdErr,setPswrdErr] = useState(false)
+
+  const [userData,setUserData] = useState('')
+
+
+  const handleSubmit = async(event)=>{
+    event.preventDefault()
+
+    if(!validName.test(name)){
+        setNameErr(true)
+    }
+    if(!validEmail.test(email)){
+        setEmailErr(true)
+    }
+    if(!validPassword.test(password)){
+        setPswrdErr(true)
+    }
+
+    const data = {name,email,password}
+
+    setUserData(data)
+
+    axios.post(`${severURl}signup`,data).then((res)=>{
+        console.log('signup success',res.data);
+        navigate('/signIn')
+
+        
+    }).catch((err)=>{
+        console.log(err);
+
+    }) 
+
+    
+
+  }
+
+
+  
 
   return (
     <ThemeProvider theme={theme}>
@@ -55,7 +99,7 @@ export default function SignUp() {
           <Typography component="h1" variant="h5">
             Sign Up
           </Typography>
-          <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
+          <Box component="form"  noValidate sx={{ mt: 1 }}>
           <TextField
               margin="normal"
               required
@@ -65,7 +109,11 @@ export default function SignUp() {
               name="name"
               autoComplete="name"
               autoFocus
+              value={name}
+              onChange={(e)=>setName(e.target.value)}
             />
+           {nameErr && <small  style={{ color: 'red' }}>Enter a valid name</small>}
+
             <TextField
               margin="normal"
               required
@@ -75,7 +123,10 @@ export default function SignUp() {
               name="email"
               autoComplete="email"
               autoFocus
+              value={email}
+              onChange={(e)=>setEmail(e.target.value)}
             />
+           {emailErr && <small  style={{ color: 'red' }}>Enter a valid email</small>}
             <TextField
               margin="normal"
               required
@@ -85,13 +136,19 @@ export default function SignUp() {
               type="password"
               id="password"
               autoComplete="current-password"
+              value={password}
+              onChange={(e)=>setPassword(e.target.value)}
             />
+          {pswrdErr && <small  style={{ color: 'red' }}>Enter a valid password</small>}
+
            
             <Button
               type="submit"
               fullWidth
               variant="contained"
               sx={{ mt: 3, mb: 2 }}
+              data={userData}
+              onClick={handleSubmit}
             >
               Sign In
             </Button>
