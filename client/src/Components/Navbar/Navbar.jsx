@@ -50,7 +50,7 @@ function Navbar() {
         <MenuIcon />
       </IconButton>
       <Typography variant="h6" className={classes.title}>
-        Title
+        videvo
       </Typography>
       <Button color="inherit" onClick={()=>navigate('/signIn')}>
         SignIn
